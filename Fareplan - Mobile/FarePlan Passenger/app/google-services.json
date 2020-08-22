@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "665672099373",
+    "firebase_url": "https://fareplan.firebaseio.com",
+    "project_id": "fareplan",
+    "storage_bucket": "fareplan.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665672099373:android:8268a30b3b775e2fbcbaa4",
+        "android_client_info": {
+          "package_name": "com.example.myandroidphpapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "665672099373-tet2pp66u6ff1deaou0th1vopke6ndr8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.myandroidphpapp",
+            "certificate_hash": "50002eba79ccc555c567bf273f8e33a3ef3133e3"
+          }
+        },
+        {
+          "client_id": "665672099373-gbfbpv19h97224mue3qt958iqe56r0jb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCce7fYNvQUR7dO7pyosMIkFEiIzm4hl_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "665672099373-gbfbpv19h97224mue3qt958iqe56r0jb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DetailsActivity">
+
+    <TextView
+        android:textSize="30sp"
+        android:textColor="#2196F3"
+        android:layout_margin="10dp"
+        android:id="@+id/mTvAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Missing amount" />
+
+    <TextView
+        android:textSize="30sp"
+        android:textColor="#2196F3"
+        android:layout_margin="10dp"
+        android:id="@+id/mTvCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Missing transaction code" />
+
+
+
+    <ImageView
+        android:layout_margin="10dp"
+        android:id="@+id/mImgBarcode"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/ic_launcher_background"
+        tools:ignore="VectorDrawableCompat" />
+</LinearLayout>
