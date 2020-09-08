@@ -20,8 +20,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::resource('/pay', 'MpesaC2bController');
+Route::resource('/subscribe', 'SubscriptionController');
 Route::resource('/status', 'TransactionStatusController');
 Route::resource('/callback', 'MpesaCallbackController');
+Route::resource('/subscriptions', 'SaccoSubscriptionsController');
 
 Auth::routes();
 

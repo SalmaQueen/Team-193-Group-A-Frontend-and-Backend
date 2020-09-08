@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>FarePlan | HOME</title>
+    <title>FarePlan | PAYMENT</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
@@ -23,13 +23,11 @@
 <!-- Navigation-->
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
     <div class="container">
-        <a class="navbar-brand js-scroll-trigger" href="#page-top">FarePlan</a><button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu<i class="fas fa-bars ml-1"></i></button>
+        <a class="navbar-brand js-scroll-trigger" href="/">FarePlan</a><button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu<i class="fas fa-bars ml-1"></i></button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#about">About</a></li>
-                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#contact">Contact</a></li>
                 <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{{route("pay.index")}}">Payment</a></li>
-                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{{route("subscribe.index")}}">Subscribe</a></li>
+                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{{route("status.index")}}">Approve</a></li>
                 <li class="nav-item dropdown">
                 @if (Route::has('login'))
                     @auth
