@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.fareplanpassenger.myandroidphpapp">
+
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNAL_SYSTEM_WINDOW"
+        tools:ignore="ProtectedPermissions" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/fareplan_logo"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/fareplan_logo_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        tools:replace="android:icon">
+        <activity
+            android:name="com.fareplanpassenger.myandroidphpapp.SettingsActivity"
+            android:theme="@style/PreferenceScreen"
+            android:label="@string/title_activity_settings"></activity>
+        <activity android:name="com.fareplanpassenger.myandroidphpapp.WebActivity" />
+        <activity android:name="com.fareplanpassenger.myandroidphpapp.Dashboardctivity" />
+        <activity android:name="com.fareplanpassenger.myandroidphpapp.VerifyPhoneActivity" />
+        <activity android:name="com.fareplanpassenger.myandroidphpapp.RegistrationActivity" />
+        <activity android:name="com.fareplanpassenger.myandroidphpapp.PaymentsActivity" />
+        <activity android:name="com.fareplanpassenger.myandroidphpapp.DetailsActivity" />
+        <activity android:name="com.fareplanpassenger.myandroidphpapp.ScancodeActivity" />
+        <activity android:name="com.fareplanpassenger.myandroidphpapp.GeneratecodeActivity" />
+        <activity android:name="com.fareplanpassenger.myandroidphpapp.OnboardingActivity" />
+        <activity android:name="com.fareplanpassenger.myandroidphpapp.ApppaymentActivity" />
+        <activity android:name="com.fareplanpassenger.myandroidphpapp.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
