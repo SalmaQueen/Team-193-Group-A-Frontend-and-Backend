@@ -69,7 +69,7 @@ class MpesaC2bController extends Controller
         $PartyA = "254708374149";
         $PartyB = "174379";
         $PhoneNumber = $payment['PhoneNumber'];
-        $CallBackURL = "http://ab7eb01be04a.ngrok.io/api/c2bcallback";
+        $CallBackURL = "http://fareplan-demo.herokuapp.com/api/c2bcallback";
         $AccountReference = "$vehicle_registration";
         $TransactionDesc = "Bus fare";
         $Remarks = "Thank you for shopping with us";
@@ -201,7 +201,7 @@ class MpesaC2bController extends Controller
         $PartyA = "254708374149";
         $PartyB = "174379";
         $PhoneNumber = $payment['PhoneNumber'];
-        $CallBackURL = "http://ab7eb01be04a.ngrok.io/api/c2bcallback";
+        $CallBackURL = "http://fareplan-demo.herokuapp.com/api/c2bcallback";
         $AccountReference = "$vehicle_registration";
         $TransactionDesc = "Bus fare";
         $Remarks = "Thank you for shopping with us";

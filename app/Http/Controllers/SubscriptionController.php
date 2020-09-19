@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Payment;
+use App\Subscribe;
 use App\Subscription;
 use App\Vehicle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class SubscriptionController extends Controller
 {
@@ -39,6 +42,93 @@ class SubscriptionController extends Controller
     public function store(Request $request)
     {
         //
+        $payment = $request->all();
+        $id = $payment['id'];
+        $subscriptions = Subscription::whereId($id)->get();
+        $sacco_name = "";
+        $amount = "";
+        $period = "";
+        $number_of_scans = "";
+
+        foreach ($subscriptions as $subscription){
+            $sacco_name = $subscription->sacco_name;
+            $amount = $subscription->amount;
+            $period = $subscription->period;
+            $number_of_scans = $subscription->number_of_scans;
+        }
+
+        $unapproved_transaction_exists = Payment::where(["is_approved"=>0,"PhoneNumber"=>$payment['PhoneNumber'],"sacco_name"=>$sacco_name])->get();
+        if (count($unapproved_transaction_exists)>0){
+            Session::flash('transaction_failed','You still have '.count($unapproved_transaction_exists).' valid payment to be approved');
+            return redirect()->back();
+        }
+
+        $mpesa= new \Safaricom\Mpesa\Mpesa();
+
+        $payment['sacco_name'] = $sacco_name;
+
+        if ($amount<10){
+            Session::flash('transaction_failed','Please pay Ksh 10 or more.');
+            return redirect()->back();
+        }
+
+        $BusinessShortCode = "174379";
+        $LipaNaMpesaPasskey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919";
+        $TransactionType = "CustomerPayBillOnline";
+        $Amount = $amount;
+        $PartyA = "254708374149";
+        $PartyB = "174379";
+        $PhoneNumber = $payment['PhoneNumber'];
+        $CallBackURL = "http://fareplan-demo.herokuapp.com/api/c2bcallback";
+        $AccountReference = "$sacco_name";
+        $TransactionDesc = "Bus fare";
+        $Remarks = "Thank you for paying with us";
+        $stkPushSimulation=$mpesa->STKPushSimulation($BusinessShortCode, $LipaNaMpesaPasskey, $TransactionType,
+            $Amount, $PartyA, $PartyB, $PhoneNumber, $CallBackURL, $AccountReference, $TransactionDesc, $Remarks);
+        $decodedJsonResponse = json_decode($stkPushSimulation);
+
+        if (isset($decodedJsonResponse->ResponseCode)){
+            $ResponseCode = $decodedJsonResponse->ResponseCode;
+            $RequestID = $decodedJsonResponse->CheckoutRequestID;
+
+            if ($ResponseCode==0){
+                $payment['ResultCode'] = $ResponseCode;
+                $payment['CheckoutRequestID'] = $RequestID;
+
+                function generateBarcodeNumber() {
+                    $number = mt_rand(100, 1000);
+                    if (barcodeNumberExists($number)) {
+                        return generateBarcodeNumber();
+                    }
+                    return $number;
+                }
+                function barcodeNumberExists($number) {
+                    //return User::whereBarcodeNumber($number)->exists();
+                }
+                $generated_code = generateBarcodeNumber();
+                $payment["pay_code"] = $payment['sacco_name'].$generated_code;
+                $payment["amount"] = $amount;
+                $payment["period"] = $period;
+                $payment["number_of_scans"] = $number_of_scans;
+
+                Subscribe::create($payment);
+                $payment = ['CheckoutRequestID'=>$payment['CheckoutRequestID'],'Amount'=>$amount,
+                    'PhoneNumber'=>$payment['PhoneNumber'],'sacco_name'=>$sacco_name,'pay_code'=>$payment["pay_code"]];
+                Payment::create($payment);
+                Session::flash('transaction_accepted','Request successful, please check your phone to enter MPESA pin. Your payment code is '.$generated_code);
+                return redirect()->back();
+            }else{
+                Session::flash('transaction_failed','Your request has been declined with error: '.$decodedJsonResponse->ResponseDescription);
+                return redirect()->back();
+            }
+        }elseif (isset($decodedJsonResponse->errorMessage)){
+            Session::flash('transaction_failed',$decodedJsonResponse->errorMessage);
+            return redirect()->back();
+        }else{
+            Session::flash('transaction_failed','An unknown error occurred, please try again');
+            return redirect()->back();
+        }
+
     }
 
     /**

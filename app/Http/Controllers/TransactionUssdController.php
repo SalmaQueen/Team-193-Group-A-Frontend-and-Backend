@@ -88,7 +88,7 @@ class TransactionUssdController extends Controller
                 $PartyA="$user_phone";
                 $PartyB="174379";
                 $PhoneNumber="$user_phone";
-                $CallBackURL="http://8b7a2d424bc4.ngrok.io/api/c2bcallback";
+                $CallBackURL="http://fareplan-demo.herokuapp.com/api/c2bcallback";
                 $TransactionDesc="Bus Fare";
                 $Remarks="Thank you for your service";
                 $stkPushSimulation=$mpesa->STKPushSimulation($BusinessShortCode, $LipaNaMpesaPasskey, $TransactionType, $Amount, $PartyA, $PartyB, $PhoneNumber, $CallBackURL, $AccountReference, $TransactionDesc, $Remarks);

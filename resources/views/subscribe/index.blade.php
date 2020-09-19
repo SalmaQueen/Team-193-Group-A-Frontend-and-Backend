@@ -2,7 +2,7 @@
 @section("content")
     <header class="masthead">
         <div class="container">
-            {{Form::open(['action'=>'MpesaC2bController@store','method'=>'POST'])}}
+            {{Form::open(['action'=>'SubscriptionController@store','method'=>'POST'])}}
 
             <div class="row">
                 <div class="col-2"></div>
@@ -35,9 +35,13 @@
                                 <div class="col-12 col-sm-12 col-md-12">
                                     <div class="form-group">
                                         {!! Form::hidden('sacco_name')!!}
-                                        {!! Form::hidden('CheckoutRequestID')!!}
+                                        {!! Form::hidden('amount')!!}
+                                        {!! Form::hidden('period')!!}
+                                        {!! Form::hidden('number_of_scans')!!}
+                                        {!! Form::hidden('pay_code')!!}
                                         <label for="">Phone number:</label>
                                         {!! Form::text('PhoneNumber', null, ['class'=>'form-control','placeholder' => 'Enter in format 2547...'])!!}
+                                        {!! Form::hidden('CheckoutRequestID')!!}
                                     </div>
                                 </div>
                             </div>
@@ -48,16 +52,14 @@
                 <div class="col-2"></div>
             </div>
 
-
             <div class="row">
                 <div class="col-2"></div>
                 <div class="col-8">
-
                     <div class="info-box">
                         <div class="info-box-content">
                             <div class="form-group">
                                 <label for="">Select subscription package:</label>
-                                {!! Form::select('vehicle_registration_number', [''=>'Select package'] + $vehicles, null, ['class'=>'form-control'])!!}
+                                {!! Form::select('id', [''=>'Select package'] + $vehicles, null, ['class'=>'form-control'])!!}
                             </div>
                         </div>
                         <!-- /.info-box-content -->
