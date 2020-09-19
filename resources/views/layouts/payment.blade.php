@@ -27,6 +27,7 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{{route("pay.index")}}">Payment</a></li>
+                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{{route("subscribe.index")}}">Subscribe</a></li>
                 <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{{route("status.index")}}">Approve</a></li>
                 <li class="nav-item dropdown">
                 @if (Route::has('login'))

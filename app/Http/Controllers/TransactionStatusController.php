@@ -116,8 +116,8 @@ class TransactionStatusController extends Controller
         $PartyA = "600391";
         $PartyB = "254708374149";//Replace with driver's phone number
         $Remarks = "Test";
-        $QueueTimeOutURL = "http://ab7eb01be04a.ngrok.io/api/b2ccallback";
-        $ResultURL = "http://ab7eb01be04a.ngrok.io/api/b2ccallback";
+        $QueueTimeOutURL = "http://fareplan-demo.herokuapp.com/api/b2ccallback";
+        $ResultURL = "http://fareplan-demo.herokuapp.com/api/b2ccallback";
         $Occasion = "";
         $mpesa= new \Safaricom\Mpesa\Mpesa();
         $b2cTransaction = $mpesa->b2c($InitiatorName, $SecurityCredential, $CommandID, $Amount, $PartyA, $PartyB,
@@ -146,9 +146,9 @@ class TransactionStatusController extends Controller
         $Amount = $amount;
         $PartyA = "600391";
         $PartyB = "254708374149";//Replace with driver's phone number
-        $Remarks = "Test";
-        $QueueTimeOutURL = "http://ab7eb01be04a.ngrok.io/api/b2ccallback";
-        $ResultURL = "http://ab7eb01be04a.ngrok.io/api/b2ccallback";
+        $Remarks = "Fareplan";
+        $QueueTimeOutURL = "http://fareplan-demo.herokuapp.com/api/b2ccallback";
+        $ResultURL = "http://fareplan-demo.herokuapp.com/api/b2ccallback";
         $Occasion = "";
         $mpesa= new \Safaricom\Mpesa\Mpesa();
         $b2cTransaction = $mpesa->b2c($InitiatorName, $SecurityCredential, $CommandID, $Amount, $PartyA, $PartyB,

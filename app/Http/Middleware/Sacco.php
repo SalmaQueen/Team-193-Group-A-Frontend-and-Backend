@@ -16,7 +16,7 @@ class Sacco
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->role_id == 2 && Auth::user()->is_active==1) {
+        if (Auth::check() && Auth::user()->role_id == 2 or Auth::user()->role_id == 1 && Auth::user()->is_active==1) {
             return $next($request);
         }else{
             return redirect('/');
