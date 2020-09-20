@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Payment;
+use App\Subscribe;
 use App\Transfer;
 use App\Vehicle;
 use Illuminate\Http\Request;
@@ -44,44 +45,53 @@ class TransactionStatusController extends Controller
         $PhoneNumber = $confirm_data['PhoneNumber'];
         $VehicleRegNumber = $confirm_data['vehicle_registration_number'];
         $transaction = Payment::where('PhoneNumber',$PhoneNumber)->where('vehicle_registration_number',$VehicleRegNumber)->where('is_approved',0)->get();
-        if (isset($transaction)){
-            $request_id = "";
-            $sacco = "";
-            $reg_no = "";
-            $amount = "";
-            $id = "";
-            if (count($transaction)>0){
-                foreach ($transaction as $item){
-                    $request_id = $item->CheckoutRequestID;
-                    $sacco = $item->sacco_name;
-                    $reg_no = $item->vehicle_registration_number;
-                    $amount = $item->Amount-2;
-                    $id = $item->id;
-                }
-                $vehicle = Vehicle::where("vehicle_registration_number",$reg_no)->get();
-                $driver_phone  = "";
-                if (count($vehicle)>0){
-                    foreach ($vehicle as $driver){
-                        $driver_phone = $driver->drivers_phone_number;
-                    }
-                    $driver_phone[0] = " ";
-                    $driver_phone = "254".trim($driver_phone);
-                }
 
-                $mpesa= new \Safaricom\Mpesa\Mpesa();
-                $businessShortCode = "174379";
-                $checkoutRequestID = $request_id;
-                $password = "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjAwNDMwMTgzOTQ5";
-                $timestamp = "20200430183949";
-                $environment = env('MPESA_ENV');
-                $STKPushRequestStatus=$mpesa->STKPushQuery($environment,$checkoutRequestID,$businessShortCode,$password,$timestamp);
-                $decodedSTKPushRequestStatus = json_decode($STKPushRequestStatus);
+        $request_id = "";
+        $sacco = "";
+        $reg_no = "";
+        $amount = "";
+        $id = "";
+        if (count($transaction)>0){
+            foreach ($transaction as $item){
+                $request_id = $item->CheckoutRequestID;
+                $sacco = $item->sacco_name;
+                $reg_no = $item->vehicle_registration_number;
+                $amount = $item->Amount-2;
+                $id = $item->id;
+            }
+            $vehicle = Vehicle::where("vehicle_registration_number",$reg_no)->get();
+            $driver_phone  = "";
+            if (count($vehicle)>0){
+                foreach ($vehicle as $driver){
+                    $driver_phone = $driver->drivers_phone_number;
+                }
+                $driver_phone[0] = " ";
+                $driver_phone = "254".trim($driver_phone);
+            }
 
-                if (isset($decodedSTKPushRequestStatus->ResultCode)){
-                    if ($decodedSTKPushRequestStatus->ResultCode!=0){
-                        Session::flash('transaction_failed',"MPESA: ".$decodedSTKPushRequestStatus->ResultDesc);
-                        $approve_value = 2;
+            $mpesa= new \Safaricom\Mpesa\Mpesa();
+            $businessShortCode = "174379";
+            $checkoutRequestID = $request_id;
+            $password = "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjAwNDMwMTgzOTQ5";
+            $timestamp = "20200430183949";
+            $environment = env('MPESA_ENV');
+            $STKPushRequestStatus=$mpesa->STKPushQuery($environment,$checkoutRequestID,$businessShortCode,$password,$timestamp);
+            $decodedSTKPushRequestStatus = json_decode($STKPushRequestStatus);
+
+            if (isset($decodedSTKPushRequestStatus->ResultCode)){
+                if ($decodedSTKPushRequestStatus->ResultCode!=0){
+                    Session::flash('transaction_failed',"MPESA: ".$decodedSTKPushRequestStatus->ResultDesc);
+                    $approve_value = 2;
+                    Payment::whereId($id)->update(["is_approved"=>$approve_value]);
+                    return redirect()->back();
+                }else{
+                    $subscriptions = Subscribe::where('CheckoutRequestID',$checkoutRequestID)->get();
+
+                    if (count($subscriptions)>0){
+                        $approve_value = 1;
                         Payment::whereId($id)->update(["is_approved"=>$approve_value]);
+                        Session::flash('transaction_approved','Payment approved');
+                        $this->b2c($amount,$driver_phone,$reg_no,$sacco);
                         return redirect()->back();
                     }else{
                         $approve_value = 1;
@@ -90,19 +100,17 @@ class TransactionStatusController extends Controller
                         $this->b2c($amount,$driver_phone,$reg_no,$sacco);
                         return redirect()->back();
                     }
-                }elseif (isset($decodedSTKPushRequestStatus->errorMessage)){
-                    Session::flash('transaction_failed','MPESA: '.$decodedSTKPushRequestStatus->errorMessage);
-                    return redirect()->back();
-                }else{
-                    Session::flash('transaction_failed','FarePlan: An unknown error occurred');
-                    return redirect()->back();
+
                 }
+            }elseif (isset($decodedSTKPushRequestStatus->errorMessage)){
+                Session::flash('transaction_failed','MPESA: '.$decodedSTKPushRequestStatus->errorMessage);
+                return redirect()->back();
             }else{
-                Session::flash('transaction_failed',"No pending payment for account $PhoneNumber to  $VehicleRegNumber. FarePlan.");
+                Session::flash('transaction_failed','FarePlan: An unknown error occurred');
                 return redirect()->back();
             }
         }else{
-            Session::flash('transaction_failed','FarePlan: Payment does not exist');
+            Session::flash('transaction_failed',"No pending payment for account $PhoneNumber to  $VehicleRegNumber. FarePlan.");
             return redirect()->back();
         }
     }
@@ -401,3 +409,104 @@ class TransactionStatusController extends Controller
     }
 
 }
+
+
+
+
+
+
+
+//public function store(Request $request)
+//{
+//    //
+//    $confirm_data = $request->all();
+//    $PhoneNumber = $confirm_data['PhoneNumber'];
+//    $VehicleRegNumber = $confirm_data['vehicle_registration_number'];
+//    $transaction = Payment::where('PhoneNumber',$PhoneNumber)->where('is_approved',0)->get();
+//
+//    $request_id = "";
+//    $sacco = "";
+//    $reg_no = "";
+//    $amount = "";
+//    $id = "";
+//    if (count($transaction)>0){
+//        foreach ($transaction as $item){
+//            $request_id = $item->CheckoutRequestID;
+//            $sacco = $item->sacco_name;
+//            $reg_no = $item->vehicle_registration_number;
+//            $amount = $item->Amount-2;
+//            $id = $item->id;
+//        }
+//        $vehicle = Vehicle::where("vehicle_registration_number",$reg_no)->get();
+//        $driver_phone  = "";
+//        if (count($vehicle)>0){
+//            foreach ($vehicle as $driver){
+//                $driver_phone = $driver->drivers_phone_number;
+//            }
+//            $driver_phone[0] = " ";
+//            $driver_phone = "254".trim($driver_phone);
+//        }
+//
+//        $mpesa= new \Safaricom\Mpesa\Mpesa();
+//        $businessShortCode = "174379";
+//        $checkoutRequestID = $request_id;
+//        $password = "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjAwNDMwMTgzOTQ5";
+//        $timestamp = "20200430183949";
+//        $environment = env('MPESA_ENV');
+//        $STKPushRequestStatus=$mpesa->STKPushQuery($environment,$checkoutRequestID,$businessShortCode,$password,$timestamp);
+//        $decodedSTKPushRequestStatus = json_decode($STKPushRequestStatus);
+//
+//        if (isset($decodedSTKPushRequestStatus->ResultCode)){
+//            if ($decodedSTKPushRequestStatus->ResultCode==0){
+//                Session::flash('transaction_failed',"MPESA: ".$decodedSTKPushRequestStatus->ResultDesc);
+//                $approve_value = 2;
+//                Payment::whereId($id)->update(["is_approved"=>$approve_value]);
+//                return redirect()->back();
+//            }else{
+//                $subscriptions = Subscribe::where('CheckoutRequestID',$checkoutRequestID)->get();
+//                $so_far_scanned = "";
+//                $number_of_scans = "";
+//                $id = "";
+//                if (count($subscriptions)>0){
+//                    foreach ($subscriptions as $subscription){
+//                        $so_far_scanned = $subscription->so_far_scanned;
+//                        $number_of_scans = $subscription->number_of_scans;
+//                        $id = $subscription->id;
+//                    }
+//                    if ($so_far_scanned<$number_of_scans){
+//                        $x = Subscribe::findOrFail($id);
+//                        $x->update(['so_far_scanned',$so_far_scanned+1]);
+//
+//                        $approve_value = 1;
+//                        Payment::whereId($id)->update(["is_approved"=>$approve_value]);
+//                        Session::flash('transaction_approved','Payment approved');
+//                        $this->b2c($amount,$driver_phone,$reg_no,$sacco);
+//                        return redirect()->back();
+//                    }else{
+//                        $approve_value = 2;
+//                        Payment::whereId($id)->update(["is_approved"=>$approve_value]);
+//                        Session::flash('transaction_failed','Subscription expired!');
+//                        return redirect()->back();
+//                    }
+//
+//                }else{
+//                    $approve_value = 1;
+//                    Payment::whereId($id)->update(["is_approved"=>$approve_value]);
+//                    Session::flash('transaction_approved','Payment approved');
+//                    $this->b2c($amount,$driver_phone,$reg_no,$sacco);
+//                    return redirect()->back();
+//                }
+//
+//            }
+//        }elseif (isset($decodedSTKPushRequestStatus->errorMessage)){
+//            Session::flash('transaction_failed','MPESA: '.$decodedSTKPushRequestStatus->errorMessage);
+//            return redirect()->back();
+//        }else{
+//            Session::flash('transaction_failed','FarePlan: An unknown error occurred');
+//            return redirect()->back();
+//        }
+//    }else{
+//        Session::flash('transaction_failed',"No pending payment for account $PhoneNumber to  $VehicleRegNumber. FarePlan.");
+//        return redirect()->back();
+//    }
+//}
