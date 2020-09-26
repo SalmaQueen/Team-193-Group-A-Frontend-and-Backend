@@ -496,6 +496,29 @@ class TransactionStatusController extends Controller
         }
     }
 
+    public function wallet_balance(Request $request){
+
+        $conductor_mobile = $request['conductor_mobile'];
+        $conductor_mobile[0]=" ";
+        $conductor_mobile[1]=" ";
+        $conductor_mobile[2]=" ";
+        $conductor_mobile = "0".trim($conductor_mobile);
+        $vehicles = Vehicle::where("conductors_phone_number",$conductor_mobile)->get();
+        $vehicle_id = "";
+        $vehicle_registration_number = "";
+        foreach ($vehicles as $vehicle){
+            $vehicle_id = $vehicle->id;
+            $vehicle_registration_number = $vehicle->vehicle_registration_number;
+        }
+        $vehicle_id = $vehicle_id;
+        $vehicle_registration_number = $vehicle_registration_number;
+
+        $wallet_balance = Wallet::where("vehicle_id",$vehicle_id)->orderBy("id","desc")->first();
+        $wallet_balance = $wallet_balance->amount;
+
+        return json_encode(["name"=>$vehicle_registration_number,"amount"=>$wallet_balance,"value"=>0]);
+    }
+
 }
 
 
