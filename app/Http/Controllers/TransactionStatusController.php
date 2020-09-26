@@ -6,6 +6,7 @@ use App\Payment;
 use App\Subscribe;
 use App\Transfer;
 use App\Vehicle;
+use App\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -89,15 +90,29 @@ class TransactionStatusController extends Controller
 
                     if (count($subscriptions)>0){
                         $approve_value = 1;
+                        $so_far_scanned = 0;
+                        $number_of_scans = 0;
+                        foreach ($subscriptions as $subscription){
+                            $so_far_scanned = $subscription->so_far_scanned;
+                            $number_of_scans = $subscription->number_of_scans;
+                        }
+                        if ($so_far_scanned<$number_of_scans){
+                            $so_far_scanned = $so_far_scanned+1;
+                        }
+                        $subscriptions->update(["so_far_scanned"=>$so_far_scanned]);
                         Payment::whereId($id)->update(["is_approved"=>$approve_value]);
                         Session::flash('transaction_approved','Payment approved');
-                        $this->b2c($amount,$driver_phone,$reg_no,$sacco);
+                        //Update wallet instead
+//                        $this->b2c($amount,$driver_phone,$reg_no,$sacco);
+                        $this->wallet($amount,$reg_no);
                         return redirect()->back();
                     }else{
                         $approve_value = 1;
                         Payment::whereId($id)->update(["is_approved"=>$approve_value]);
                         Session::flash('transaction_approved','Payment approved');
-                        $this->b2c($amount,$driver_phone,$reg_no,$sacco);
+                        //Update wallet instead
+//                        $this->b2c($amount,$driver_phone,$reg_no,$sacco);
+                        $this->wallet($amount,$reg_no);
                         return redirect()->back();
                     }
 
@@ -117,6 +132,7 @@ class TransactionStatusController extends Controller
 
     public function b2c($amount,$driver_phone,$vehicleregno,$sacco_name)
     {
+        //-100
         $InitiatorName = "testapi";
         $SecurityCredential = "IyoeRnVvo1EuWLCPy2t4e6Cn+phW22BS1tXZp3x/bLiL24wHR97FIcHejIuqs7HUAHzlOyGrVLRKjdK+RqcURyoHufI9eeBINt4LxwS3jYe1U1BKUfORFZ6AqWidxwxwGVi9hZftua9hbwoOJHPLoGaVTxe7NkN7jIy9kv87TBUZTjfJGWtrL9aQToe5jDwH2XteQba71j6XtWAacQ6rx3/Eseeo5f1kf1zBwwsJt1y58N1LrhX6xzbNCTguE91MoNhYRNnGsZ4h427epFXthbNXDkE3f/WkofJFphlTCeOnjJ0mWjA6twbL7gPc9kpsus7neLvvTHNHTvyjbUeFlQ==";
         $CommandID = "BusinessPayment";
@@ -148,6 +164,7 @@ class TransactionStatusController extends Controller
 
     public function mobile_b2c($amount,$driver_phone,$vehicleregno,$sacco_name)
     {
+        //-100
         $InitiatorName = "testapi";
         $SecurityCredential = "IyoeRnVvo1EuWLCPy2t4e6Cn+phW22BS1tXZp3x/bLiL24wHR97FIcHejIuqs7HUAHzlOyGrVLRKjdK+RqcURyoHufI9eeBINt4LxwS3jYe1U1BKUfORFZ6AqWidxwxwGVi9hZftua9hbwoOJHPLoGaVTxe7NkN7jIy9kv87TBUZTjfJGWtrL9aQToe5jDwH2XteQba71j6XtWAacQ6rx3/Eseeo5f1kf1zBwwsJt1y58N1LrhX6xzbNCTguE91MoNhYRNnGsZ4h427epFXthbNXDkE3f/WkofJFphlTCeOnjJ0mWjA6twbL7gPc9kpsus7neLvvTHNHTvyjbUeFlQ==";
         $CommandID = "BusinessPayment";
@@ -243,7 +260,9 @@ class TransactionStatusController extends Controller
 
                         $approve_value = 1;
                         Payment::whereId($id)->update(["is_approved"=>$approve_value]);
-                        return $this->mobile_b2c($amount,$driver_phone,$reg_no,$sacco);
+//                        return $this->mobile_b2c($amount,$driver_phone,$reg_no,$sacco);
+                        return $this->mobile_wallet($amount,$reg_no);
+
 
 //                        return json_encode(["message"=>$decodedSTKPushRequestStatus->ResultDesc,"value"=>1]);
                     }
@@ -333,8 +352,9 @@ class TransactionStatusController extends Controller
 
                         $approve_value = 1;
                         Payment::whereId($id)->update(["is_approved"=>$approve_value]);
-                        return $this->mobile_b2c($amount,$driver_phone,$reg_no,$sacco);
 
+//                        return $this->mobile_b2c($amount,$driver_phone,$reg_no,$sacco);
+                        return $this->mobile_wallet($amount,$reg_no);
 //                        return json_encode(["message"=>$decodedSTKPushRequestStatus->ResultDesc,"value"=>1]);
                     }
                 }elseif (isset($decodedSTKPushRequestStatus->errorMessage)){
@@ -406,6 +426,74 @@ class TransactionStatusController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function wallet($amount,$vehicleregno){
+        $vehicles = Vehicle::where("vehicle_registration_number",$vehicleregno)->get();
+        $vehicle_id = "";
+        $conductor_phone = "";
+        $driver_phone = "";
+        if (count($vehicles)>0){
+            foreach ($vehicles as $vehicle){
+                $vehicle_id = $vehicle->id;
+                $conductor_phone = $vehicle->conductors_phone_number;
+                $driver_phone = $vehicle->drivers_phone_number;
+            }
+            $vehicle_id = $vehicle_id;
+            $conductor_phone = $conductor_phone;
+            $driver_phone = $driver_phone;
+
+            $wallet_data = ["vehicle_id"=>$vehicle_id,"amount"=>$amount];
+            $wallet_exists = Wallet::where("vehicle_id",$vehicle_id)->get();
+            if (count($wallet_exists)>0){
+                $last_wallet_record = Wallet::where("vehicle_id",$vehicle_id)->orderBy("id","desc")->first();
+                $existing_amount = $last_wallet_record->amount;
+                $new_amount = $existing_amount+$amount;
+                $last_wallet_record->update(["amount"=>$new_amount]);
+                Session::flash('transaction_approved','Payment approved. CASH SENT TO WALLET');
+                return redirect()->back();
+            }
+            Wallet::create($wallet_data);
+            Session::flash('transaction_approved','Payment approved. CASH SENT TO WALLET');
+            return redirect()->back();
+
+        }else{
+            Session::flash('transaction_failed','An error occurred. CASH NOT ADDED TO WALLET. FarePlan.');
+            return redirect()->back();
+        }
+    }
+
+    public function mobile_wallet($amount,$vehicleregno){
+        $vehicles = Vehicle::where("vehicle_registration_number",$vehicleregno)->get();
+        $vehicle_id = "";
+        $conductor_phone = "";
+        $driver_phone = "";
+        if (count($vehicles)>0){
+            foreach ($vehicles as $vehicle){
+                $vehicle_id = $vehicle->id;
+                $conductor_phone = $vehicle->conductors_phone_number;
+                $driver_phone = $vehicle->drivers_phone_number;
+            }
+            $vehicle_id = $vehicle_id;
+            $conductor_phone = $conductor_phone;
+            $driver_phone = $driver_phone;
+
+            $wallet_data = ["vehicle_id"=>$vehicle_id,"amount"=>$amount];
+            $wallet_exists = Wallet::where("vehicle_id",$vehicle_id)->get();
+            if (count($wallet_exists)>0){
+                $last_wallet_record = Wallet::where("vehicle_id",$vehicle_id)->orderBy("id","desc")->first();
+                $existing_amount = $last_wallet_record->amount;
+                $new_amount = $existing_amount+$amount;
+                $last_wallet_record->update(["amount"=>$new_amount]);
+                return json_encode(["message"=>"Payment approved. CASH SENT TO WALLET","value"=>0]);
+            }
+            Wallet::create($wallet_data);
+            return json_encode(["message"=>"Payment approved. CASH SENT TO WALLET","value"=>0]);
+
+        }else{
+            Session::flash('transaction_failed','');
+            return json_encode(["message"=>"An error occurred. CASH NOT ADDED TO WALLET. FarePlan.","value"=>1]);
+        }
     }
 
 }

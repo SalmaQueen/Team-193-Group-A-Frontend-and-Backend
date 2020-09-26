@@ -40,4 +40,6 @@ Route::group(['middleware'=>'sacco'], function(){
     Route::resource("sacco","SaccoVehicleController");
     Route::get('/vehicles', 'SaccoVehicleController@vehicles')->name('sacco.vehicles');
     Route::resource('/vehicle/action', 'SaccoVehicleActionsController');
+    Route::get('/subscribers', 'SaccoSubscriptionsController@subscribers')->name('sacco.subscribers');
+    Route::get('/payments', 'SaccoSubscriptionsController@payments')->name('sacco.payments');
 });

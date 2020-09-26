@@ -193,6 +193,30 @@
                             </li>
                         </ul>
                     </li>
+
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon far fa-plus-square"></i>
+                            <p>
+                                Payment records
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{route("sacco.payments")}}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Direct</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route("sacco.subscribers")}}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Subscribers</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

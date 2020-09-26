@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Payment;
 use App\Role;
 use App\Sacco;
+use App\Subscribe;
 use App\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -120,5 +122,26 @@ class SaccoSubscriptionsController extends Controller
         Subscription::findOrFail($id)->delete();
         Session::flash('deleted_subscription','Subscription deleted successfully.');
         return redirect("/subscriptions");
+    }
+
+
+    public function subscribers()
+    {
+        //
+        if (Auth::check()) {
+            $sacco_name = Auth::user()->sacco_name;
+            $subscribers = Subscribe::where("sacco_name",$sacco_name)->get();
+            return view("sacco.payments.subscriptions",compact('subscribers'));
+        }
+    }
+
+    public function payments()
+    {
+        //
+        if (Auth::check()) {
+            $sacco_name = Auth::user()->sacco_name;
+            $payments = Payment::where(["sacco_name"=>$sacco_name,"is_approved"=>1])->get();
+            return view("sacco.payments.payments",compact('payments'));
+        }
     }
 }
