@@ -27,3 +27,4 @@ Route::post('/c2bcallback', 'TransactionCallbackController@c2bcallback');
 Route::post('/b2ccallback', 'TransactionCallbackController@b2ccallback');
 Route::post('/ussd', 'TransactionUssdController@ussd');
 Route::post('/load_wallet', 'TransactionStatusController@wallet_balance');
+Route::post('/withdraw', 'TransactionStatusController@withdraw');

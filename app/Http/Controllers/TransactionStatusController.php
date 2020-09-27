@@ -136,7 +136,7 @@ class TransactionStatusController extends Controller
         $InitiatorName = "testapi";
         $SecurityCredential = "IyoeRnVvo1EuWLCPy2t4e6Cn+phW22BS1tXZp3x/bLiL24wHR97FIcHejIuqs7HUAHzlOyGrVLRKjdK+RqcURyoHufI9eeBINt4LxwS3jYe1U1BKUfORFZ6AqWidxwxwGVi9hZftua9hbwoOJHPLoGaVTxe7NkN7jIy9kv87TBUZTjfJGWtrL9aQToe5jDwH2XteQba71j6XtWAacQ6rx3/Eseeo5f1kf1zBwwsJt1y58N1LrhX6xzbNCTguE91MoNhYRNnGsZ4h427epFXthbNXDkE3f/WkofJFphlTCeOnjJ0mWjA6twbL7gPc9kpsus7neLvvTHNHTvyjbUeFlQ==";
         $CommandID = "BusinessPayment";
-        $Amount = $amount;
+        $Amount = $amount-100;
         $PartyA = "600391";
         $PartyB = "254708374149";//Replace with driver's phone number
         $Remarks = "Test";
@@ -162,7 +162,7 @@ class TransactionStatusController extends Controller
         }
     }
 
-    public function mobile_b2c($amount,$driver_phone,$vehicleregno,$sacco_name)
+    public function mobile_b2c($amount,$driver_phone,$vehicleregno,$sacco_name,$vehicle_id,$conductor_phone)
     {
         //-100
         $InitiatorName = "testapi";
@@ -184,10 +184,19 @@ class TransactionStatusController extends Controller
 
         if (isset($decodedJsonResponse->ResponseCode)){
             if ($decodedJsonResponse->ResponseCode == 0){
-                Transfer::create(["vehicle_registration_number"=>$vehicleregno,"sacco_name"=>$sacco_name,"ConversationID"=>$decodedJsonResponse->ConversationID,"TransactionAmount"=>$amount,"ReceiverPhoneNumber"=>$driver_phone]);
-                return json_encode(["message"=>"Paid Ksh. $amount to $vehicleregno $sacco_name","value"=>0]);
+                $changed_wallet = Wallet::where("vehicle_id",$vehicle_id)->orderBy("id","desc")->first();
+                if (isset($changed_wallet->id)){
+                    $new_wallet_balance = $changed_wallet->amount - ($amount+100);
+                    $changed_wallet->update(["withdraw_number"=>$conductor_phone,"sent_to_number"=>$driver_phone,"amount"=>$new_wallet_balance]);
+                    Transfer::create(["vehicle_registration_number"=>$vehicleregno,"sacco_name"=>$sacco_name,"ConversationID"=>$decodedJsonResponse->ConversationID,"TransactionAmount"=>$amount,"ReceiverPhoneNumber"=>$driver_phone]);
+                    return json_encode(["name"=>"WITHDRAWING SUCCESS","amount"=>"Ksh $amount sent to driver. Refresh to see wallet balance.\nThank you. Fareplan.","value"=>0]);
+                }else{
+                    return json_encode(["name"=>"SUCCESS WITH AN ERROR","amount"=>"STOP AND CONTACT US IMMEDIATELY!!!. FarePlan.","value"=>1]);
+                }
+
+
             }else{
-                return json_encode(["message"=>"Passenger paid but cash is not sent to driver. Ask FarePlan team to assist. Let the passenger go. FarePlan.","value"=>1]);
+                return json_encode(["name"=>"SUCCESS WITH AN ERROR","amount"=>"STOP AND CONTACT US IMMEDIATELY!!!. FarePlan.","value"=>1]);
             }
         }
     }
@@ -227,7 +236,7 @@ class TransactionStatusController extends Controller
                     $request_id = $item->CheckoutRequestID;
                     $sacco = $item->sacco_name;
                     $reg_no = $item->vehicle_registration_number;
-                    $amount = $item->Amount;
+                    $amount = $item->Amount-2;
                     $id = $item->id;
                 }
                 $vehicle = Vehicle::where("vehicle_registration_number",$reg_no)->get();
@@ -319,7 +328,7 @@ class TransactionStatusController extends Controller
                     $request_id = $item->CheckoutRequestID;
                     $sacco = $item->sacco_name;
                     $reg_no = $item->vehicle_registration_number;
-                    $amount = $item->Amount;
+                    $amount = $item->Amount-2;
                     $id = $item->id;
                 }
                 $vehicle = Vehicle::where("vehicle_registration_number",$reg_no)->get();
@@ -514,9 +523,43 @@ class TransactionStatusController extends Controller
         $vehicle_registration_number = $vehicle_registration_number;
 
         $wallet_balance = Wallet::where("vehicle_id",$vehicle_id)->orderBy("id","desc")->first();
-        $wallet_balance = $wallet_balance->amount;
 
-        return json_encode(["name"=>$vehicle_registration_number,"amount"=>$wallet_balance,"value"=>0]);
+        if (isset($wallet_balance->amount)){
+            $wallet_balance = $wallet_balance->amount;
+            return json_encode(["name"=>$vehicle_registration_number,"amount"=>$wallet_balance,"vehicle_id"=>$vehicle_id,"value"=>0]);
+        }
+        return json_encode(["name"=>"Unauthorised access","amount"=>"Sorry, this module is only accessible to matatu operators","value"=>1]);
+    }
+
+    public function withdraw(Request $request){
+//        $this->mobile_b2c($amount,$driver_phone,$reg_no,$sacco);
+
+        $vehicle_id = $request['vehicle_id'];
+        $amount = $request['amount'];
+        $wallet_balance = Wallet::where("vehicle_id",$vehicle_id)->first();
+        if (isset($wallet_balance->amount)){
+            $wallet_balance = $wallet_balance->amount;
+            $withdrawable_balance = $wallet_balance-100;
+            if ($withdrawable_balance<$amount){
+                if ($withdrawable_balance<0){
+                    $withdrawable_balance = 0;
+                }
+                return json_encode(["name"=>"INSUFFICIENT FUNDS","amount"=>"Sorry, You can only withdraw up to Ksh $withdrawable_balance.\nThank you. Fareplan.","value"=>1]);
+            }
+            $withdrawing_vehicle = Vehicle::where("id",$vehicle_id)->first();
+            if (isset($withdrawing_vehicle->id)){
+                $driver_phone = $withdrawing_vehicle->drivers_phone_number;
+                $conductor_phone = $withdrawing_vehicle->conductors_phone_number;
+                $reg_no = $withdrawing_vehicle->vehicle_registration_number;
+                $sacco = $withdrawing_vehicle->sacco_name;
+                return $this->mobile_b2c($amount,$driver_phone,$reg_no,$sacco,$vehicle_id,$conductor_phone);
+            }else{
+
+                //Incomplete
+                return json_encode(["name"=>"WITHDRAWING SUCCESS","amount"=>"Ksh $amount sent to driver. Refresh to see wallet balance.\nThank you. Fareplan.","value"=>0]);
+            }
+        }
+        return json_encode(["name"=>"Unauthorised access","amount"=>"Sorry, this module is only accessible to matatu operators","value"=>1]);
     }
 
 }
