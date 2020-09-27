@@ -231,12 +231,12 @@ class MpesaC2bController extends Controller
     }
 
     public function load_vehicles(Request $request){
-        $vehicles = Vehicle::orderBy("id")->get();
+        $vehicles = Vehicle::orderBy("id","desc")->get();
         return $vehicles;
     }
 
     public function load_payments(Request $request){
-        $payments = Payment::orderBy("id")->get();
+        $payments = Payment::orderBy("id","desc")->get();
         return $payments;
     }
 }
