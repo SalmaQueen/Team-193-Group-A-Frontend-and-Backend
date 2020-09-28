@@ -17,6 +17,20 @@
     </div>
     <div class="row">
         @include('includes.form_error')
+        <div id="pay">
+            <script>
+                function myFunction() {
+                    document.getElementById("pay").innerHTML =
+                        '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                        '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                        '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                        '<p class="text-success">Loading..</p>'+
+                        '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                        '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                        '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n';
+                };
+            </script>
+        </div>
     </div>
 
     <div class="row">
@@ -75,7 +89,7 @@
 
 
             <div class="form-group">
-                {!! Form::submit('Update User', ['class'=>'btn btn-primary col-sm-6']) !!}
+                {!! Form::submit('Update User', ['class'=>'btn btn-primary col-sm-6','onclick'=>'myFunction()']) !!}
             </div>
 
             {!! Form::close() !!}

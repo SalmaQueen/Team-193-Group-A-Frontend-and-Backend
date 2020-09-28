@@ -47,6 +47,21 @@
         </div>
     @endif
 
+    <div id="pay">
+        <script>
+            function myFunction() {
+                document.getElementById("pay").innerHTML =
+                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                    '<p class="text-success">Loading..</p>'+
+                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n';
+            };
+        </script>
+    </div>
+
 
     <h1>Users</h1>
 
@@ -105,7 +120,7 @@
 
 
                                <div class="form-group">
-                                   {!! Form::submit('Complete', ['class'=>'btn btn_opt']) !!}
+                                   {!! Form::submit('Complete', ['class'=>'btn btn_opt','onclick'=>'myFunction()']) !!}
                                </div>
                                {!! Form::close() !!}
                            </li>
@@ -119,7 +134,7 @@
 
 
                                <div class="form-group">
-                                   {!! Form::submit('Suspend', ['class'=>'btn btn_opt']) !!}
+                                   {!! Form::submit('Suspend', ['class'=>'btn btn_opt','onclick'=>'myFunction()']) !!}
                                </div>
                                {!! Form::close() !!}
                            </li>
@@ -133,7 +148,7 @@
 
 
                                <div class="form-group">
-                                   {!! Form::submit('Activate', ['class'=>'btn btn_opt']) !!}
+                                   {!! Form::submit('Activate', ['class'=>'btn btn_opt','onclick'=>'myFunction()']) !!}
                                </div>
                                {!! Form::close() !!}
                            </li>
@@ -147,7 +162,7 @@
 
 
                                <div class="form-group">
-                                   {!! Form::submit('Deactivate', ['class'=>'btn btn_opt']) !!}
+                                   {!! Form::submit('Deactivate', ['class'=>'btn btn_opt','onclick'=>'myFunction()']) !!}
                                </div>
                                {!! Form::close() !!}
                            </li>
@@ -157,7 +172,7 @@
                                {!! Form::open(['method'=>'DELETE', 'action'=> ['AdminUsersController@destroy', $user->id]]) !!}
 
                                    <div class="form-group">
-                                       {!! Form::submit('Delete', ['class'=>'btn btn_opt']) !!}
+                                       {!! Form::submit('Delete', ['class'=>'btn btn_opt','onclick'=>'myFunction()']) !!}
                                    </div>
 
                                {!! Form::close() !!}

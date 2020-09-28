@@ -27,6 +27,20 @@
                 </div>
             @endif
             @include('includes.form_error')
+                <div id="pay">
+                    <script>
+                        function myFunction() {
+                            document.getElementById("pay").innerHTML =
+                                '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                '<p class="text-success">Loading..</p>'+
+                                '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n';
+                        };
+                    </script>
+                </div>
             <div class="info-box">
                 <span class="info-box-icon bg-info elevation-1"><i class="fas fa-plus"></i></span>
                 <div class="info-box-content">
@@ -127,7 +141,7 @@
             <div class="info-box">
                 <div class="info-box-content">
                     <div class="form-group">
-                        {!! Form::submit('Submit', ['class'=>'btn btn-outline-info btn-block']) !!}
+                        {!! Form::submit('Submit', ['class'=>'btn btn-outline-info btn-block','onclick'=>'myFunction()']) !!}
                     </div>
                 </div>
                 <!-- /.info-box-content -->

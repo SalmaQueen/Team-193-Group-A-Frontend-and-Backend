@@ -50,6 +50,20 @@
                     </ul>
                 </div>
             @endif
+            <div id="pay">
+                <script>
+                    function myFunction() {
+                        document.getElementById("pay").innerHTML =
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<p class="text-success">Loading..</p>'+
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n';
+                    };
+                </script>
+            </div>
             <div class="form-group">
                 {!! Form::label('amount', 'Amount in Ksh:') !!}
                 {!! Form::hidden('sacco_name', null)!!}
@@ -63,7 +77,7 @@
             </div>
 
             <div class="form-group">
-                {!! Form::submit('Create subscription', ['class'=>'btn btn-outline-primary btn-block']) !!}
+                {!! Form::submit('Create subscription', ['class'=>'btn btn-outline-primary btn-block','onclick'=>'myFunction()']) !!}
             </div>
             {!! Form::close() !!}
         </div>

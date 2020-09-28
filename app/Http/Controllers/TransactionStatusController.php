@@ -215,9 +215,9 @@ class TransactionStatusController extends Controller
         $vehicle_registration_number = "";
         if (isset($paid_vehicle)){
             if (count($paid_vehicle)>0){
-                foreach ($paid_vehicle as $item){
-                    $vehicle_registration_number = $item->vehicle_registration_number;
-                }
+               foreach ($paid_vehicle as $item){
+                   $vehicle_registration_number = $item->vehicle_registration_number;
+               }
             }
         }
 
