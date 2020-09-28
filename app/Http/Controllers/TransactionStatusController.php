@@ -215,9 +215,9 @@ class TransactionStatusController extends Controller
         $vehicle_registration_number = "";
         if (isset($paid_vehicle)){
             if (count($paid_vehicle)>0){
-               foreach ($paid_vehicle as $item){
-                   $vehicle_registration_number = $item->vehicle_registration_number;
-               }
+                foreach ($paid_vehicle as $item){
+                    $vehicle_registration_number = $item->vehicle_registration_number;
+                }
             }
         }
 
@@ -494,10 +494,10 @@ class TransactionStatusController extends Controller
                 $existing_amount = $last_wallet_record->amount;
                 $new_amount = $existing_amount+$amount;
                 $last_wallet_record->update(["amount"=>$new_amount]);
-                return json_encode(["message"=>"Payment approved. CASH SENT TO WALLET","value"=>0]);
+                return json_encode(["message"=>"Payment of Ksh $amount approved. CASH SENT TO WALLET","value"=>0]);
             }
             Wallet::create($wallet_data);
-            return json_encode(["message"=>"Payment approved. CASH SENT TO WALLET","value"=>0]);
+            return json_encode(["message"=>"Payment of Ksh $amount approved. CASH SENT TO WALLET","value"=>0]);
 
         }else{
             Session::flash('transaction_failed','');
@@ -513,27 +513,33 @@ class TransactionStatusController extends Controller
         $conductor_mobile[2]=" ";
         $conductor_mobile = "0".trim($conductor_mobile);
         $vehicles = Vehicle::where("conductors_phone_number",$conductor_mobile)->get();
-        $vehicle_id = "";
-        $vehicle_registration_number = "";
-        foreach ($vehicles as $vehicle){
-            $vehicle_id = $vehicle->id;
-            $vehicle_registration_number = $vehicle->vehicle_registration_number;
-        }
-        $vehicle_id = $vehicle_id;
-        $vehicle_registration_number = $vehicle_registration_number;
+        if (count($vehicles)>0){
+            $vehicle_id = "";
+            $vehicle_registration_number = "";
+            foreach ($vehicles as $vehicle){
+                $vehicle_id = $vehicle->id;
+                $vehicle_registration_number = $vehicle->vehicle_registration_number;
+            }
+            $vehicle_id = $vehicle_id;
+            $vehicle_registration_number = $vehicle_registration_number;
 
-        $wallet_balance = Wallet::where("vehicle_id",$vehicle_id)->orderBy("id","desc")->first();
+            $wallet_balance = Wallet::where("vehicle_id",$vehicle_id)->orderBy("id","desc")->first();
 
-        if (isset($wallet_balance->amount)){
-            $wallet_balance = $wallet_balance->amount;
-            return json_encode(["name"=>$vehicle_registration_number,"amount"=>$wallet_balance,"vehicle_id"=>$vehicle_id,"value"=>0]);
+            if (isset($wallet_balance->amount)){
+                $wallet_balance = $wallet_balance->amount;
+                return json_encode(["name"=>$vehicle_registration_number,"amount"=>$wallet_balance,"vehicle_id"=>$vehicle_id,"value"=>0]);
+            }else{
+                $wallet_balance = 0;
+                return json_encode(["name"=>$vehicle_registration_number,"amount"=>$wallet_balance,"vehicle_id"=>$vehicle_id,"value"=>0]);
+            }
+        }else{
+            return json_encode(["name"=>"Unauthorised access","amount"=>"Sorry, this module is only accessible to matatu operators","value"=>1]);
         }
-        return json_encode(["name"=>"Unauthorised access","amount"=>"Sorry, this module is only accessible to matatu operators","value"=>1]);
+
     }
 
     public function withdraw(Request $request){
 //        $this->mobile_b2c($amount,$driver_phone,$reg_no,$sacco);
-
         $vehicle_id = $request['vehicle_id'];
         $amount = $request['amount'];
         $wallet_balance = Wallet::where("vehicle_id",$vehicle_id)->first();
