@@ -2,10 +2,30 @@
 
 @section("content")
     <!-- Masthead-->
+
     <header class="masthead">
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                @if(Session::has('mail_sent'))
+                    <p class="bg-danger"></p>
+                    <div class="alert alert-success">
+                        <strong>Success!</strong> {{session('mail_sent')}}
+                    </div>
+                @endif
+                @if(Session::has('mail_sent_fail'))
+                    <p class="bg-danger"></p>
+                    <div class="alert alert-danger">
+                        <strong>FAILED!</strong> {{session('mail_sent_fail')}}
+                    </div>
+                @endif
+            </div>
+            <div class="col-md-4"></div>
+        </div>
         <div class="container">
             <div class="masthead-subheading">Welcome to FarePlan</div>
             <div class="masthead-heading text-uppercase">We manage your ma3</div>
+
             <a class="btn btn-primary btn-md text-uppercase js-scroll-trigger" href="#contact">Join FarePlan</a>
         </div>
     </header>
@@ -60,35 +80,55 @@
             <div class="text-center">
                 <h2 class="section-heading text-uppercase">Contact Us</h2>
                 <h3 class="section-subheading text-light">Looking forward to hearing from you.</h3>
+                <div id="pay">
+                    <script>
+                        function myFunction() {
+                            document.getElementById("pay").innerHTML =
+                                '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                '<p class="text-success">Loading..</p>'+
+                                '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n';
+                        };
+                    </script>
+                </div>
+
             </div>
-            <form id="contactForm" name="sentMessage" novalidate="novalidate">
-                <div class="row align-items-stretch mb-5">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <input class="form-control" id="name" type="text" placeholder="Your Name *" required="required" data-validation-required-message="Please enter your name." />
-                            <p class="help-block text-danger"></p>
-                        </div>
-                        <div class="form-group">
-                            <input class="form-control" id="email" type="email" placeholder="Your Email *" required="required" data-validation-required-message="Please enter your email address." />
-                            <p class="help-block text-danger"></p>
-                        </div>
-                        <div class="form-group mb-md-0">
-                            <input class="form-control" id="phone" type="tel" placeholder="Your Phone *" required="required" data-validation-required-message="Please enter your phone number." />
-                            <p class="help-block text-danger"></p>
-                        </div>
+
+            {!! Form::open(['method'=>'POST', 'action'=> 'EmailsController@store']) !!}
+            <div class="row align-items-stretch mb-5">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {!! Form::label('name', 'Name:') !!}
+                        {!! Form::text('name', null, ['class'=>'form-control','placeholder'=>'Your Name *','required'=>true, 'id'=>"name"])!!}
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group form-group-textarea mb-md-0">
-                            <textarea class="form-control" id="message" placeholder="Your Message *" required="required" data-validation-required-message="Please enter a message."></textarea>
-                            <p class="help-block text-danger"></p>
-                        </div>
+
+                    <div class="form-group">
+                        {!! Form::label('email', 'Email:') !!}
+                        {!! Form::email('email', null, ['class'=>'form-control','placeholder'=>'Your Email *','required'=>true])!!}
+                    </div>
+
+                    <div class="form-group">
+                        {!! Form::label('phone', 'Phone:') !!}
+                        {!! Form::tel('phone', null, ['class'=>'form-control','placeholder'=>'Your Phone *','required'=>true,'maxlength'=>10])!!}
                     </div>
                 </div>
-                <div class="text-center">
-                    <div id="success"></div>
-                    <button class="btn btn-primary btn-xl text-uppercase" id="sendMessageButton" type="submit">Send Message</button>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {!! Form::label('message_body', 'Message:') !!}
+                        {!! Form::textarea('message_body', null, ['class'=>'form-control','placeholder'=>'Your Message *','required'=>true])!!}
+                    </div>
                 </div>
-            </form>
+            </div>
+            <div class="text-center">
+                <div class="form-group">
+                    {!! Form::submit('Send Message', ['class'=>'btn btn-primary btn-xl text-uppercase','onclick'=>'myFunction()']) !!}
+                </div>
+            </div>
+            {!! Form::close() !!}
+
         </div>
     </section>
 @stop
