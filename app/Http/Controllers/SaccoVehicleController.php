@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VehicleAddRequest;
+use App\Sacco;
 use App\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,7 @@ class SaccoVehicleController extends Controller
             $user_name = Auth::user()->name;
             $user_email = Auth::user()->email;
             $sacco_name = Auth::user()->sacco_name;
+
             $total_vehicles = Vehicle::where("sacco_name",$sacco_name)->get();
             $total_vehicles = count($total_vehicles);
 
@@ -63,9 +65,16 @@ class SaccoVehicleController extends Controller
             $user_email = Auth::user()->email;
             $sacco_name = Auth::user()->sacco_name;
             $vehicle = $request->all();
+
+            $Sacco = Sacco::where("chair_email_address",$user_email)->first();
+            $SaccoID = "";
+            if (isset($Sacco->id)){
+                $SaccoID = $Sacco->id;
+            }
             $vehicle['added_by_name'] = $user_name;
             $vehicle['added_by_email'] = $user_email;
             $vehicle['sacco_name'] = $sacco_name;
+            $vehicle['sacco_id'] = $SaccoID;
 
             $drivers_phone = $vehicle['drivers_phone_number'];
             $confirm_drivers_phone = $vehicle['confirm_drivers_phone_number'];

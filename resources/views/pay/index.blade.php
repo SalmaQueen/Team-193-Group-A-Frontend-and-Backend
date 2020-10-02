@@ -49,10 +49,11 @@
                                <div class="col-12 col-sm-12 col-md-6">
                                    <div class="form-group">
                                        {!! Form::hidden('sacco_name')!!}
+                                       {!! Form::hidden('sacco_id')!!}
                                        {!! Form::hidden('CheckoutRequestID')!!}
                                        {!! Form::hidden('pay_code')!!}
                                        <label for="">Phone number:</label>
-                                       {!! Form::text('PhoneNumber', null, ['class'=>'form-control','placeholder' => 'Enter in format 2547...'])!!}
+                                       {!! Form::text('PhoneNumber', null, ['class'=>'form-control','placeholder' => 'Enter M-PESA number'])!!}
                                    </div>
                                </div>
                                <div class="col-12 col-sm-12 col-md-6">

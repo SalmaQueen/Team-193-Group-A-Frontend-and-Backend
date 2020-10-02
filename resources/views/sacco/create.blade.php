@@ -55,6 +55,7 @@
                         {!! Form::hidden('added_by_name')!!}
                         {!! Form::hidden('added_by_email')!!}
                         {!! Form::hidden('sacco_name')!!}
+                        {!! Form::hidden('sacco_id')!!}
                         <div class="row">
                             <div class="row">
                                 <div class="col-12 col-sm-12 col-md-6">

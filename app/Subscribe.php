@@ -10,5 +10,5 @@ class Subscribe extends Model
     //
     use softDeletes;
     protected $dates = ['deleted_at'];
-    public $fillable = ['sacco_name','amount','period','number_of_scans','PhoneNumber','CheckoutRequestID','pay_code','so_far_scanned'];
+    public $fillable = ['sacco_name','sacco_id','is_expired','amount','period','number_of_scans','PhoneNumber','CheckoutRequestID','expires','daily_track','pay_code','so_far_scanned'];
 }

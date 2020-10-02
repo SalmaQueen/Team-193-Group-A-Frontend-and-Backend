@@ -53,8 +53,9 @@
                                         {!! Form::hidden('period')!!}
                                         {!! Form::hidden('number_of_scans')!!}
                                         {!! Form::hidden('pay_code')!!}
+                                        {!! Form::hidden('sacco_id')!!}
                                         <label for="">Phone number:</label>
-                                        {!! Form::text('PhoneNumber', null, ['class'=>'form-control','placeholder' => 'Enter in format 2547...'])!!}
+                                        {!! Form::text('PhoneNumber', null, ['class'=>'form-control','placeholder' => 'Enter M-PESA number'])!!}
                                         {!! Form::hidden('CheckoutRequestID')!!}
                                     </div>
                                 </div>
@@ -73,7 +74,7 @@
                         <div class="info-box-content">
                             <div class="form-group">
                                 <label for="">Select subscription package:</label>
-                                {!! Form::select('id', [''=>'Select package'] + $vehicles, null, ['class'=>'form-control'])!!}
+                                {!! Form::select('id', [''=>'Select package'] + $SaccoSubscriptionPackages, null, ['class'=>'form-control'])!!}
                             </div>
                         </div>
                         <!-- /.info-box-content -->

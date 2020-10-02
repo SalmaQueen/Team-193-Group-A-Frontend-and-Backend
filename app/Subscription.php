@@ -9,5 +9,5 @@ class Subscription extends Model
 {
     //
     use softDeletes;
-    public $fillable = ['sacco_name','amount','period','number_of_scans','package','created_by'];
+    public $fillable = ['sacco_name','sacco_id','amount','period','number_of_scans','package','created_by'];
 }

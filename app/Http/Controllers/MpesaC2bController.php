@@ -50,18 +50,35 @@ class MpesaC2bController extends Controller
         $mpesa= new \Safaricom\Mpesa\Mpesa();
         $vehicle_registration = $payment['vehicle_registration_number'];
         $vehicle = Vehicle::whereVehicleRegistrationNumber($vehicle_registration)->get();
+        $SaccoID = "";
 
         foreach ($vehicle as $item){
+            $SaccoID = $item->sacco_id;
             $vehicle = $item->sacco_name;
         }
         $payment['sacco_name'] = $vehicle;
+        $payment['sacco_id'] = $SaccoID;
 
         $payment['sacco_name'] = $vehicle;
         if ($payment['Amount']<10){
             Session::flash('transaction_failed','Please pay Ksh 10 or more.');
             return redirect()->back();
         }
-
+        $paying_phone = $payment['PhoneNumber'];
+        $paying_phone = trim($paying_phone);
+        if ($paying_phone[0]==0){
+            $paying_phone[0] = " ";
+            $paying_phone = "254".trim($paying_phone);
+        }
+        if ($paying_phone[0]=="+"){
+            $paying_phone[0] = " ";
+            $paying_phone = trim($paying_phone);
+        }
+        if (strlen($paying_phone)!=12){
+            Session::flash('transaction_failed',"$paying_phone is not a valid MPESA number");
+            return redirect()->back();
+        }
+        $payment['PhoneNumber'] = $paying_phone;
         $BusinessShortCode = "174379";
         $LipaNaMpesaPasskey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919";
         $TransactionType = "CustomerPayBillOnline";

@@ -69,6 +69,7 @@
                 {!! Form::hidden('sacco_name', null)!!}
                 {!! Form::hidden('created_by', null)!!}
                 {!! Form::hidden('package', null)!!}
+                {!! Form::hidden('sacco_id', null)!!}
                 {!! Form::text('amount', null, ['class'=>'form-control','placeholder'=>'Enter subscription amount'])!!}<br>
                 {!! Form::label('period', 'Select period:') !!}
                 {!! Form::select('period', array(''=>'Select period of validity:',7 => "1 week", 30=> "1 Month"), null , ['class'=>'form-control'])!!}<br>
