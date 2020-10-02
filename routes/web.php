@@ -27,6 +27,8 @@ Route::resource('/callback', 'MpesaCallbackController');
 Route::get('/b2c', 'TransactionStatusController@b2c');
 Route::get('/approve/{vehicle_registration_number}/{user_phone_number}', 'TransactionStatusController@approve');
 
+
+
 Route::group(['middleware'=>'admin'], function(){
     Route::resource("admin","AdminSaccoController");
     Route::get('/saccos', 'AdminSaccoController@saccos')->name('admin.saccos');

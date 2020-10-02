@@ -29,6 +29,20 @@
                         </div>
                     @endif
                     @include('includes.form_error')
+                    <div id="pay">
+                        <script>
+                            function myFunction() {
+                                document.getElementById("pay").innerHTML =
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<p class="text-success">Loading..</p>'+
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n';
+                            };
+                        </script>
+                    </div>
                     <div class="info-box">
                         <div class="info-box-content">
                             <div class="row">
@@ -39,8 +53,9 @@
                                         {!! Form::hidden('period')!!}
                                         {!! Form::hidden('number_of_scans')!!}
                                         {!! Form::hidden('pay_code')!!}
+                                        {!! Form::hidden('sacco_id')!!}
                                         <label for="">Phone number:</label>
-                                        {!! Form::text('PhoneNumber', null, ['class'=>'form-control','placeholder' => 'Enter in format 2547...'])!!}
+                                        {!! Form::text('PhoneNumber', null, ['class'=>'form-control','placeholder' => 'Enter M-PESA number'])!!}
                                         {!! Form::hidden('CheckoutRequestID')!!}
                                     </div>
                                 </div>
@@ -59,7 +74,7 @@
                         <div class="info-box-content">
                             <div class="form-group">
                                 <label for="">Select subscription package:</label>
-                                {!! Form::select('id', [''=>'Select package'] + $vehicles, null, ['class'=>'form-control'])!!}
+                                {!! Form::select('id', [''=>'Select package'] + $SaccoSubscriptionPackages, null, ['class'=>'form-control'])!!}
                             </div>
                         </div>
                         <!-- /.info-box-content -->
@@ -74,7 +89,7 @@
                     <div class="info-box">
                         <div class="info-box-content">
                             <div class="form-group">
-                                {!! Form::submit('Subscribe', ['class'=>'btn btn-outline-info btn-block']) !!}
+                                {!! Form::submit('Subscribe', ['class'=>'btn btn-outline-info btn-block','onclick'=>'myFunction()']) !!}
                             </div>
                         </div>
                         <!-- /.info-box-content -->

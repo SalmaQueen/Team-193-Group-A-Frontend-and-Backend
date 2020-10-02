@@ -21,6 +21,20 @@
     <div class="row">
         <div class="col-sm-2"></div>
         <div class="col-sm-4">
+            <div id="pay">
+                <script>
+                    function myFunction() {
+                        document.getElementById("pay").innerHTML =
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<p class="text-success">Loading..</p>'+
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n';
+                    };
+                </script>
+            </div>
 
             {!! Form::open(['method'=>'POST', 'action'=> 'AdminRolesController@store']) !!}
             <div class="form-group">
@@ -29,7 +43,7 @@
             </div>
 
             <div class="form-group">
-                {!! Form::submit('Create Role', ['class'=>'btn btn-primary']) !!}
+                {!! Form::submit('Create Role', ['class'=>'btn btn-primary','onclick'=>'myFunction()']) !!}
             </div>
             {!! Form::close() !!}
 

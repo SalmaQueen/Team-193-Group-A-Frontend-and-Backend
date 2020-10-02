@@ -6,6 +6,7 @@ use App\Payment;
 use App\Subscribe;
 use App\Subscription;
 use App\Vehicle;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -19,8 +20,8 @@ class SubscriptionController extends Controller
     public function index()
     {
         //
-        $vehicles = Subscription::orderBy("sacco_name","asc")->pluck("package","id")->all();
-        return view("subscribe.index",compact("vehicles"));
+        $SaccoSubscriptionPackages = Subscription::orderBy("sacco_name","asc")->pluck("package","id")->all();
+        return view("subscribe.index",compact("SaccoSubscriptionPackages"));
     }
 
     /**
@@ -46,20 +47,28 @@ class SubscriptionController extends Controller
         $id = $payment['id'];
         $subscriptions = Subscription::whereId($id)->get();
         $sacco_name = "";
+        $sacco_id = "";
         $amount = "";
         $period = "";
         $number_of_scans = "";
 
         foreach ($subscriptions as $subscription){
             $sacco_name = $subscription->sacco_name;
-            $amount = $subscription->amount;
+            $amount = $subscription->amount+2;
             $period = $subscription->period;
             $number_of_scans = $subscription->number_of_scans;
+            $sacco_id = $subscription->sacco_id;
         }
 
-        $unapproved_transaction_exists = Payment::where(["is_approved"=>0,"PhoneNumber"=>$payment['PhoneNumber'],"sacco_name"=>$sacco_name])->get();
-        if (count($unapproved_transaction_exists)>0){
-            Session::flash('transaction_failed','You still have '.count($unapproved_transaction_exists).' valid payment to be approved');
+        $unapproved_transaction_exists = Payment::where(["is_approved"=>0,"PhoneNumber"=>$payment['PhoneNumber'],"sacco_id"=>$sacco_id,'is_subscription'=>0])->first();
+        if (isset($unapproved_transaction_exists->id)){
+            $unapproved_transaction_exists->update(["is_approved"=>3]);
+//            Session::flash('transaction_failed','You still have '.count($unapproved_transaction_exists).' valid payment to be approved');
+//            return redirect()->back();
+        }
+        $subscription_exists = Subscribe::where(["is_expired"=>0,"PhoneNumber"=>$payment['PhoneNumber'],"sacco_id"=>$sacco_id])->first();
+        if (isset($subscription_exists->id)){
+            Session::flash('transaction_failed',"You still have a valid subscription to this sacco. Continue enjoying your trips");
             return redirect()->back();
         }
 
@@ -71,6 +80,22 @@ class SubscriptionController extends Controller
             Session::flash('transaction_failed','Please pay Ksh 10 or more.');
             return redirect()->back();
         }
+
+        $paying_phone = $payment['PhoneNumber'];
+        $paying_phone = trim($paying_phone);
+        if ($paying_phone[0]==0){
+            $paying_phone[0] = " ";
+            $paying_phone = "254".trim($paying_phone);
+        }
+        if ($paying_phone[0]=="+"){
+            $paying_phone[0] = " ";
+            $paying_phone = trim($paying_phone);
+        }
+        if (strlen($paying_phone)!=12){
+            Session::flash('transaction_failed',"$paying_phone is not a valid MPESA number");
+            return redirect()->back();
+        }
+        $payment['PhoneNumber'] = $paying_phone;
 
         $BusinessShortCode = "174379";
         $LipaNaMpesaPasskey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919";
@@ -110,10 +135,17 @@ class SubscriptionController extends Controller
                 $payment["amount"] = $amount;
                 $payment["period"] = $period;
                 $payment["number_of_scans"] = $number_of_scans;
+                $payment["sacco_id"] = $sacco_id;
+                if ($payment['period']==7){
+                    $payment["expires"] = Carbon::now()->addWeek()->toDateTimeString();
+                }
+                if ($payment['period']==30){
+                    $payment["expires"] = Carbon::now()->addMonth()->toDateTimeString();
+                }
 
                 Subscribe::create($payment);
                 $payment = ['CheckoutRequestID'=>$payment['CheckoutRequestID'],'Amount'=>$amount,
-                    'PhoneNumber'=>$payment['PhoneNumber'],'sacco_name'=>$sacco_name,'pay_code'=>$payment["pay_code"]];
+                    'PhoneNumber'=>$payment['PhoneNumber'],'sacco_name'=>$sacco_name,'pay_code'=>$payment["pay_code"],'is_subscription'=>1,'sacco_id'=>$sacco_id];
                 Payment::create($payment);
                 Session::flash('transaction_accepted','Request successful, please check your phone to enter MPESA pin. Your payment code is '.$generated_code);
                 return redirect()->back();

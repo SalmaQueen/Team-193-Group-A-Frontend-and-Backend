@@ -17,6 +17,7 @@ class CreateVehiclesTable extends Migration
             $table->id();
             $table->string("is_active")->default(1);
             $table->string("sacco_name")->nullable();
+            $table->string("sacco_id")->default(0);
             $table->string("vehicle_registration_number");
             $table->string("vehicle_nickname");
             $table->string("driver_name");

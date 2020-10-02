@@ -16,6 +16,7 @@ class CreateSubscriptionsTable extends Migration
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->string("sacco_name");
+            $table->string('sacco_id')->default(0);
             $table->string("amount");
             $table->string("period");
             $table->string("number_of_scans");

@@ -26,6 +26,7 @@ class Vehicle extends Model
         "is_active",
         "is_approved",
         "sacco_name",
+        "sacco_id",
         "capacity"
     ];
 }

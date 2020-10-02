@@ -58,10 +58,13 @@ class SaccoSubscriptionsController extends Controller
             $subscription['created_by'] = $user_email;
             $saccos = Sacco::whereChairEmailAddress($user_email)->get();
             $sacco_name = "";
+            $sacco_id = "";
             foreach ($saccos as $sacco){
                 $sacco_name = $sacco->sacco_name;
+                $sacco_id = $sacco->id;
             }
             $subscription['sacco_name'] = $sacco_name;
+            $subscription['sacco_id'] = $sacco_id;
             $subscription['package'] = $sacco_name." | "."Ksh ".$subscription['amount']." | ".$subscription['period']." days."." (".$subscription['number_of_scans']." scans per day)";
             Subscription::create($subscription);
             Session::flash('subscription_created','Subscription created successfully');
@@ -130,6 +133,13 @@ class SaccoSubscriptionsController extends Controller
         //
         if (Auth::check()) {
             $sacco_name = Auth::user()->sacco_name;
+            $user_email = Auth::user()->email;
+            $Sacco = Sacco::where("chair_email_address",$user_email)->first();
+            $SaccoID = "";
+            if (isset($Sacco->id)){
+                $SaccoID = $Sacco->id;
+            }
+
             $subscribers = Subscribe::where("sacco_name",$sacco_name)->get();
             return view("sacco.payments.subscriptions",compact('subscribers'));
         }

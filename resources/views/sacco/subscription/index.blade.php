@@ -50,11 +50,26 @@
                     </ul>
                 </div>
             @endif
+            <div id="pay">
+                <script>
+                    function myFunction() {
+                        document.getElementById("pay").innerHTML =
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<p class="text-success">Loading..</p>'+
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                            '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n';
+                    };
+                </script>
+            </div>
             <div class="form-group">
                 {!! Form::label('amount', 'Amount in Ksh:') !!}
                 {!! Form::hidden('sacco_name', null)!!}
                 {!! Form::hidden('created_by', null)!!}
                 {!! Form::hidden('package', null)!!}
+                {!! Form::hidden('sacco_id', null)!!}
                 {!! Form::text('amount', null, ['class'=>'form-control','placeholder'=>'Enter subscription amount'])!!}<br>
                 {!! Form::label('period', 'Select period:') !!}
                 {!! Form::select('period', array(''=>'Select period of validity:',7 => "1 week", 30=> "1 Month"), null , ['class'=>'form-control'])!!}<br>
@@ -63,7 +78,7 @@
             </div>
 
             <div class="form-group">
-                {!! Form::submit('Create subscription', ['class'=>'btn btn-outline-primary btn-block']) !!}
+                {!! Form::submit('Create subscription', ['class'=>'btn btn-outline-primary btn-block','onclick'=>'myFunction()']) !!}
             </div>
             {!! Form::close() !!}
         </div>

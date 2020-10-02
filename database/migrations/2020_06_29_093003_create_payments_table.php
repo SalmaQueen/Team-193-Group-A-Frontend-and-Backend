@@ -21,9 +21,11 @@ class CreatePaymentsTable extends Migration
             $table->string("PhoneNumber")->nullable();
             $table->string("TransactionDate")->nullable();
             $table->string("sacco_name")->nullable();
+            $table->string("sacco_id")->default(0);
             $table->string("vehicle_registration_number")->nullable();
             $table->string("pay_code")->default(0);
             $table->string("is_approved")->default(0);
+            $table->string("is_subscription")->default(0);
             $table->timestamps();
         });
     }

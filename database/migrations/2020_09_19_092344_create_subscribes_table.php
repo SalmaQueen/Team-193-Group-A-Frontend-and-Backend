@@ -16,6 +16,8 @@ class CreateSubscribesTable extends Migration
         Schema::create('subscribes', function (Blueprint $table) {
             $table->id();
             $table->string('sacco_name')->nullable();
+            $table->string('sacco_id')->default(0);
+            $table->string('is_expired')->default(0);
             $table->string('amount')->nullable();
             $table->string('period')->nullable();
             $table->string('number_of_scans')->nullable();
@@ -23,6 +25,8 @@ class CreateSubscribesTable extends Migration
             $table->string('pay_code')->nullable();
             $table->string('so_far_scanned')->default(0);
             $table->string('CheckoutRequestID')->nullable();
+            $table->string('expires')->nullable();
+            $table->string('daily_track')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

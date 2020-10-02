@@ -28,6 +28,20 @@
                             </ul>
                         </div>
                     @endif
+                        <div id="pay">
+                        <script>
+                             function myFunction() {
+                                document.getElementById("pay").innerHTML =
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<p class="text-success">Loading..</p>'+
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n';
+                            };
+                        </script>
+                        </div>
                     @include('includes.form_error')
                     <div class="info-box">
                         <div class="info-box-content">
@@ -35,10 +49,11 @@
                                <div class="col-12 col-sm-12 col-md-6">
                                    <div class="form-group">
                                        {!! Form::hidden('sacco_name')!!}
+                                       {!! Form::hidden('sacco_id')!!}
                                        {!! Form::hidden('CheckoutRequestID')!!}
                                        {!! Form::hidden('pay_code')!!}
                                        <label for="">Phone number:</label>
-                                       {!! Form::text('PhoneNumber', null, ['class'=>'form-control','placeholder' => 'Enter in format 2547...'])!!}
+                                       {!! Form::text('PhoneNumber', null, ['class'=>'form-control','placeholder' => 'Enter M-PESA number'])!!}
                                    </div>
                                </div>
                                <div class="col-12 col-sm-12 col-md-6">
@@ -79,7 +94,7 @@
                     <div class="info-box">
                         <div class="info-box-content">
                             <div class="form-group">
-                                {!! Form::submit('PAY', ['class'=>'btn btn-outline-info btn-block']) !!}
+                                {!! Form::submit('PAY', ['class'=>'btn btn-outline-info btn-block','onclick'=>'myFunction()']) !!}
                             </div>
                         </div>
                         <!-- /.info-box-content -->

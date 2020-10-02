@@ -50,6 +50,20 @@
                         </div>
                     @endif
                     @include('includes.form_error')
+                    <div id="pay">
+                        <script>
+                            function myFunction() {
+                                document.getElementById("pay").innerHTML =
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<p class="text-success">Loading..</p>'+
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n';
+                            };
+                        </script>
+                    </div>
                 </div>
                 <div class="col-2"></div>
             </div>
@@ -63,8 +77,28 @@
                         <div class="info-box-content" style="display: flex;">
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label for="">Phone number:</label>
-                                    {!! Form::text('PhoneNumber', null, ['class'=>'form-control','placeholder' => 'Enter in format 2547...'])!!}
+                                    <label for="">Conductor Phone number:</label>
+                                    {!! Form::text('ConductorPhoneNumber', null, ['class'=>'form-control','placeholder' => 'Enter sacco registered number'])!!}
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                </div>
+                <div class="col-2"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-2"></div>
+                <div class="col-8">
+
+                    <div class="info-box">
+                        <div class="info-box-content" style="display: flex;">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="">Customer Phone number:</label>
+                                    {!! Form::text('PhoneNumber', null, ['class'=>'form-control','placeholder' => 'Enter M-PESA number'])!!}
                                 </div>
                             </div>
 
@@ -98,7 +132,7 @@
                     <div class="info-box">
                         <div class="info-box-content">
                             <div class="form-group">
-                                {!! Form::submit('CONFIRM', ['class'=>'btn btn-outline-info btn-block']) !!}
+                                {!! Form::submit('CONFIRM', ['class'=>'btn btn-outline-info btn-block','onclick'=>'myFunction()']) !!}
                             </div>
                         </div>
                         <!-- /.info-box-content -->

@@ -27,6 +27,20 @@
                             </ul>
                         </div>
                     @endif
+                    <div id="pay">
+                        <script>
+                            function myFunction() {
+                                document.getElementById("pay").innerHTML =
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<p class="text-success">Loading..</p>'+
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n' +
+                                    '<span class="spinner-grow spinner-grow-sm bg-success"></span>\n';
+                            };
+                        </script>
+                    </div>
                 </div>
                 <div class="col-2"></div>
             </div>
@@ -73,7 +87,7 @@
 
 
                                             <div class="form-group">
-                                                {!! Form::submit('Warn', ['class'=>'btn btn_opt']) !!}
+                                                {!! Form::submit('Warn', ['class'=>'btn btn_opt','onclick'=>'myFunction()']) !!}
                                             </div>
                                             {!! Form::close() !!}
                                         </li>
@@ -101,7 +115,7 @@
 
 
                                             <div class="form-group">
-                                                {!! Form::submit('Activate', ['class'=>'btn btn_opt']) !!}
+                                                {!! Form::submit('Activate', ['class'=>'btn btn_opt','onclick'=>'myFunction()']) !!}
                                             </div>
                                             {!! Form::close() !!}
                                         </li>
@@ -114,7 +128,7 @@
 
 
                                             <div class="form-group">
-                                                {!! Form::submit('Deactivate', ['class'=>'btn btn_opt']) !!}
+                                                {!! Form::submit('Deactivate', ['class'=>'btn btn_opt','onclick'=>'myFunction()']) !!}
                                             </div>
                                             {!! Form::close() !!}
                                         </li>
